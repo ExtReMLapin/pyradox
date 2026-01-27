@@ -21,6 +21,8 @@ def readlines(filename, encodings):
         try:
             with open(filename, encoding=encoding) as f:
                 lines = f.readlines()
+            if lines and lines[0] and lines[0][0] == '\ufeff':
+                lines[0] = lines[0][1:]
             return lines
         except UnicodeDecodeError:
             warnings.warn(ParseWarning("Failed to decode input file %s using codec %s." % (filename, encoding)))
@@ -28,6 +30,8 @@ def readlines(filename, encodings):
 
 def parse(s, filename="<string>"):
     """Parse a string."""
+    if s and s[0] == '\ufeff':
+        s = s[1:]
     lines = s.splitlines()
     token_data = lex(lines, filename)
     return parse_tree(token_data, filename)
